@@ -1,0 +1,35 @@
+Q: When I try to upload I get an error.  What am I doing wrong?
+
+A: Nothing.  oftpd does not allow you to upload files, create
+   directories, use any other FTP comands that modify the filesystem of
+   the server.  This is the way it is supposed to work.  If the code
+   doesn't write files, there's no way it can write them incorrectly!
+
+
+Q: Okay, can you add the STOR command, so I can upload files?  I
+   promise, I'll only use it on a secure network.
+
+A: This is possible, and I may add this some day.  (Or, if you have some
+   C programming background, you can add it yourself - the code's not
+   that bad, I promise.)  I don't have any dates in mind, however.  ;)
+
+
+Q: Is there a Debian/Red Hat/whatever package for oftpd?
+
+A: Matthew Danish has a preliminary Debian package available at:
+
+    ftp://emu.res.cmu.edu/pub/new-packages/
+
+   There are not any RPM's that I know of.  The install should be fairly
+   painless, but I'll probably put together an RPM at some point.
+
+
+Q: It doesn't compile on my system.  What am I doing wrong?
+
+A: Probably nothing.  All known compiler issues have been resolved, but
+   there may still be problems.  Send me an e-mail and I'll try to help
+   you through any problems.
+
+
+Shane Kerr <shane@time-travellers.org>
+$Id: FAQ,v 1.1 2001/04/03 21:21:37 shane Exp $

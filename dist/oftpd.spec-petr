@@ -1,0 +1,65 @@
+Summary: oftpd is fast, secure, anonymous-only FTP server.
+Name: oftpd
+Version: 0.3.5
+Release: 1
+Copyright: GPL
+Group: System Environment/Daemons
+URL: http://www.time-travellers.org/oftpd/
+Source0: http://www.time-travellers.com/oftpd/oftpd-%{version}.tar.gz
+Source1: oftpd.sh
+#Source2: oftpd-logrotate
+#Patch0: oftpd-home.patch
+BuildRoot: %{_tmppath}/%{name}-root
+Provides: anonftp
+Conflicts: ftpserver
+
+%description
+oftpd is designed to be as secure as an anonymous FTP server can
+possibly be.  It runs as non-root for most of the time, and uses the
+Unix chroot() command to hide most of the systems directories from
+external users - they cannot change into them even if the server is
+totally compromised!  It contains its own directory change code, so that
+it can run efficiently as a threaded server, and its own directory
+listing code (many FTP servers execute the system "ls" command to list
+files).
+
+
+%prep
+%setup  -q
+#%patch0 -p1 -b .rh
+
+
+%build
+./configure	--prefix=/usr --sysconfdir=/etc --mandir=/usr/share/man \
+		--bindir=/usr/sbin
+make
+
+%install
+make install DESTDIR=$RPM_BUILD_ROOT
+
+mkdir -p $RPM_BUILD_ROOT/var/ftp/pub
+
+mkdir -p $RPM_BUILD_ROOT/etc/init.d
+install %{SOURCE1} $RPM_BUILD_ROOT/etc/init.d/oftpd
+
+#mkdir -p $RPM_BUILD_ROOT/etc/logrotate.d
+#install %{SOURCE2} $RPM_BUILD_ROOT/etc/logrotate.d/oftpd
+
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%files
+%defattr(644,root,root)
+%doc AUTHORS BUGS COPYING ChangeLog FAQ INSTALL NEWS README TODO
+%attr(0755,root,root)	%config /etc/init.d/oftpd
+# %attr(0644,root,root)	%config /etc/logrotate.d/oftpd
+%attr(0755,root,root)	%dir /var/ftp/pub
+%attr(0755,root,root)	/usr/sbin/oftpd
+/usr/share/man/man8/oftpd.8*
+
+
+%changelog
+* Mon Apr 16 2001 Petr Kri¹tof <Petr@Kristof.CZ>
+- Initial release
+

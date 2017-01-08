@@ -1,0 +1,67 @@
+#! /bin/sh
+#
+# RedHat 7.0 init style script
+# oftpd	Start/Stop anon ftp server
+# Uses chkconfig tool to manage runlevel startup
+# To install do the following:
+# cp oftpd /etc/rc.d/init.d/.;chkconfig --add oftpd
+#
+# chkconfig: 345 50 50
+# description:	Basic chroot jailed anon ftp server \
+#               see: http://www.time-travellers.com/oftpd/
+#
+# processname: oftpd
+# pidfile: none
+# config: none, set ==> $OFTPD, $FTPROOT, $USER
+#
+
+#Change these three lines to suit your needs
+OFTPD=/opt/bin/oftpd
+FTPROOT=/var/oftp
+USER=ftp
+
+# Source function library.
+. /etc/init.d/functions
+
+[ -x $OFTPD ] || exit 0
+
+
+start() {
+        echo -n "Starting oftpd: "
+        daemon $OFTPD $USER $FTPROOT
+        RETVAL=$?
+        echo
+        [ $RETVAL -eq 0 ]
+	return $RETVAL
+}
+
+stop() {
+        echo -n "Stopping oftpd services: "
+        killproc oftpd
+        RETVAL=$?
+        echo
+        [ $RETVAL -eq 0 ]
+	return $RETVAL
+}
+
+# See how we were called.
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  status)
+	status oftpd
+	;;
+  restart|reload)
+	stop
+	start
+	;;
+  *)
+	echo "Usage: oftpd {start|stop|status|restart|reload|}"
+	exit 1
+esac
+
+exit $RETVAL

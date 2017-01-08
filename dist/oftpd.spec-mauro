@@ -1,0 +1,62 @@
+Summary: oftpd server for Linux
+Name: oftpd
+Version: 0.3.5
+Release: 1prj6
+Copyright: GPL
+Group: System/Servers
+Source: %{name}-%{version}.tar.gz
+BuildRoot: /tmp/%{name}-%{version}-root
+Provides: ftpserver
+
+%description
+oftpd is designed to be as secure as an anonymous FTP server can
+possibly be.  It runs as non-root for most of the time, and uses the
+Unix chroot() command to hide most of the systems directories from
+external users - they cannot change into them even if the server is
+totally compromised!  It contains its own directory change code, so that
+it can run efficiently as a threaded server, and its own directory
+listing code (many FTP servers execute the system "ls" command to list
+files).  It is currently being code-reviewed for buffer overflows, and
+being load-tested.
+
+%prep
+%setup
+
+%build
+CFLAGS=${RPM_OPT_FLAGS} ./configure 
+
+if [ -n `uname -v | grep SMP | sed "s/ /_/g"` ] 
+then
+    make -j 2
+else
+    make 
+fi
+
+
+%install
+rm -rf $RPM_BUILD_ROOT
+mkdir -p $RPM_BUILD_ROOT/usr/{sbin,man/man8} $RPM_BUILD_ROOT/etc/rc.d/init.d $RPM_BUILD_ROOT/var/oftp
+install -s src/oftpd $RPM_BUILD_ROOT/usr/sbin/oftpd
+install man/oftpd.8 $RPM_BUILD_ROOT/usr/man/man8/oftpd.8
+perl -pi -e "s/OFTPD=\/opt\/bin\/oftpd/OFTPD=\/usr\/sbin\/oftpd/g" init/oftpd.redhat7
+install init/oftpd.redhat7 $RPM_BUILD_ROOT/etc/rc.d/init.d/oftpd
+bzip2 -9 $RPM_BUILD_ROOT/usr/man/man8/oftpd.8
+                                                  
+
+%clean
+rm -rf $RPM_BUILD_ROOT 
+
+
+%files
+%defattr(-,root,root,-)
+%doc AUTHORS BUGS FAQ README
+%attr(755,ftp,ftp)   /var/oftp
+%attr(755,root,root) /usr/sbin/oftpd
+%attr(755,root,root) %config /etc/rc.d/init.d/oftpd
+%attr(664,root,man)  %doc /usr/man/man8/oftpd.8.bz2
+
+
+%changelog
+
+* Tue May  1 2001 Mauro Tortonesi <mauro@ferrara.linux.it>
+- first release

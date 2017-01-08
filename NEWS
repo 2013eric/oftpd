@@ -1,0 +1,16 @@
+2004-03-25
+
+  oftpd is more-or-less abandoned at this point.  Fortunately it
+  pretty much just works.  Please drop me a line if you want to
+  maintain it.
+
+
+2000-12-13
+
+  IPv6 code is maintained by Mauro Tortonesi <mauro@ferrara.linux.it>.
+  You can download the latest patches for oftpd from the Project6
+  website:
+
+    http://project6.ferrara.linux.it
+
+  Thanks Mauro!
