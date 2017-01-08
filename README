@@ -1,5 +1,10 @@
 $Id: README,v 1.8 2004/03/25 20:52:09 shane Exp $
 
+Note
+
+This is a fork of Shane Kerr's oftpd. This fork is designed for OpenBSD
+and maximum security in mind.
+
 
 Installation
 
@@ -12,13 +17,7 @@ binary.  Short version (as root):
 
 This will install the oftpd daemon itself.  To run the server via the
 standard Unix startup mechanism, you'll need to add it to your startup
-files.  In most Linux systems, this means putting a shell script in the
-/etc/rc.d/init.d directory and linking to it from the directories for
-your various run levels.  If you have a Red Hat 7.0 (or similiar)
-system, you can use the oftpd.redhat7 script for this purpose:
-
-  # cp init/oftpd.redhat7 /etc/rc.d/init.d/oftpd
-  # chkconfig --add oftpd
+files.
 
 Be sure to read the FAQ if you have any questions!
 
@@ -49,9 +48,9 @@ own.  :)
 
 Portability
 
-oftpd currently runs on modern Linux systems, including Red Hat-derived
-(Mandrake, Trustix, etc.) and Debian systems.  oftpd has been ported to
-FreeBSD and is in the FreeBSD ports collection.
+This fork of oftpd is designed only for OpenBSD. Compatibility with
+Linux is not guarenteed. See the `origin` branch or Shane Kerr's website
+for the original, Linux-compatible oftpd.
 
 
 While I have given up development of oftpd, it's small and reliable.  Don't
