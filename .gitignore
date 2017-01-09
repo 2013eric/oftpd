@@ -1,11 +1,14 @@
 # http://www.gnu.org/software/automake
 
+Makefile
 Makefile.in
 /ar-lib
 /mdate-sh
 /py-compile
 /test-driver
 /ylwrap
+.deps
+.dirstamp
 
 # http://www.gnu.org/software/autoconf
 
@@ -15,8 +18,10 @@ Makefile.in
 /aclocal.m4
 /compile
 /config.guess
-/config.h.in
+/config.h*
 /config.sub
+/config.log
+/config.status
 /configure
 /configure.scan
 /depcomp
@@ -24,10 +29,6 @@ Makefile.in
 /missing
 /stamp-h1
 
-# https://www.gnu.org/software/libtool/
-
-/ltmain.sh
-
-# http://www.gnu.org/software/texinfo
-
-/texinfo.tex
+# oftpd
+/oftpd
+/src/*.o
