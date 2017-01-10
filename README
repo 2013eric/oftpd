@@ -9,6 +9,7 @@ Installation
 See the INSTALL file for directions on compiling and installing the
 binary.  Short version (as root):
 
+  # ./autogen.sh
   # ./configure
   # make
   # make install
