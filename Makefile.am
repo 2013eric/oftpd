@@ -1,3 +1,2 @@
-## Process this file with automake to produce Makefile.in
-EXTRA_DIST = BUGS FAQ acconfig.h
+EXTRA_DIST = BUGS FAQ
 SUBDIRS = src man

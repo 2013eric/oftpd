@@ -1,7 +1,9 @@
-dnl Process this file with autoconf to produce a configure script.
-AC_INIT(src/file_list.c)
-AM_INIT_AUTOMAKE(oftpd, 0.3.7)
-AM_CONFIG_HEADER(src/config.h)
+AC_INIT([oftpd], [0.3.7])
+AC_CONFIG_HEADERS([src/config.h])
+AC_CONFIG_SRCDIR([src/oftpd.c])
+AC_CONFIG_FILES([Makefile src/Makefile man/Makefile])
+
+AM_INIT_AUTOMAKE
 
 dnl Checks for programs.
 AC_PROG_AWK
@@ -98,6 +100,10 @@ dnl Check whether to enable IPv6 support
 AC_ARG_ENABLE([ipv6],[  --enable-ipv6           Enable IPv6 support (disabled by default)],
               CFLAGS="$CFLAGS -DINET6",)
 
+AH_TOP([#undef HAVE_NEW_SS_FAMILY])
+AH_TOP([#undef HAVE_SENDFILE])
+AH_TOP([#undef HAVE_LINUX_SENDFILE])
+AH_TOP([#undef HAVE_FREEBSD_SENDFILE])
+
 AC_SUBST(HAVE_NEW_SS_FAMILY)
-AC_OUTPUT(Makefile src/Makefile man/Makefile)
-dnl AM_CONFIG_HEADER(src/config.h)
+AC_OUTPUT
