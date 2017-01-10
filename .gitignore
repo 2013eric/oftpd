@@ -12,13 +12,13 @@ Makefile.in
 
 # http://www.gnu.org/software/autoconf
 
+config.h*
 /autom4te.cache
 /autoscan.log
 /autoscan-*.log
 /aclocal.m4
 /compile
 /config.guess
-/config.h*
 /config.sub
 /config.log
 /config.status
