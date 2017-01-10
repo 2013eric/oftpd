@@ -86,7 +86,7 @@ int file_nlst(int out, const char *cur_dir, const char *filespec)
         cur_dir = "";
         dir_len = 0;
     } else {
-        strcpy(pattern, cur_dir);
+        strlcpy(pattern, cur_dir, sizeof(pattern));
 	if ((cur_dir[0] != '/') || (cur_dir[1] != '\0')) {
             strlcat(pattern, "/", sizeof(pattern));
 	}
@@ -173,7 +173,7 @@ int file_list(int out, const char *cur_dir, const char *filespec)
         cur_dir = "";
         dir_len = 0;
     } else {
-        strcpy(pattern, cur_dir);
+        strlcpy(pattern, cur_dir, sizeof(pattern));
 	if ((cur_dir[0] != '/') || (cur_dir[1] != '\0')) {
             strlcat(pattern, "/", sizeof(pattern));
 	}

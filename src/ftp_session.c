@@ -185,7 +185,7 @@ int ftp_session_init(ftp_session_t *f,
 
     f->telnet_session = t;
     assert(strlen(dir) < sizeof(f->dir));
-    strcpy(f->dir, dir);
+    strlcpy(f->dir, dir, sizeof(f->dir));
 
     f->data_channel = DATA_PORT;
     f->data_port = *client_addr;
@@ -500,14 +500,14 @@ static void change_dir(ftp_session_t *f, const char *new_dir)
     p = new_dir;
     if (*p == '/') {
         /* if this starts with a '/' it is an absolute path */
-        strcpy(target, "/");
+        strlcpy(target, "/", sizeof(target));
 	do {
 	    p++;
 	} while (*p == '/');
     } else {
         /* otherwise it's a relative path */
 	assert(strlen(f->dir) < sizeof(target));
-	strcpy(target, f->dir);
+	strlcpy(target, f->dir, sizeof(target));
     }
 
     /* add on each directory, handling "." and ".." */
@@ -531,7 +531,7 @@ static void change_dir(ftp_session_t *f, const char *new_dir)
 	    assert(prev_dir != NULL);
 	    *prev_dir = '\0';
 	    if (prev_dir == target) {
-                strcpy(target, "/");
+                strlcpy(target, "/", sizeof(target));
 	    }
 
 	} else {
@@ -598,10 +598,10 @@ static void change_dir(ftp_session_t *f, const char *new_dir)
 	assert(strlen(target) < sizeof(f->dir));
 	/* send a readme unless we changed to our current directory */
 	if (strcmp(f->dir, target) != 0) {
-	    strcpy(f->dir, target);
+	    strlcpy(f->dir, target, sizeof(f->dir));
             send_readme(f, 250);
         } else {
-	    strcpy(f->dir, target);
+	    strlcpy(f->dir, target, sizeof(f->dir));
 	}
         reply(f, 250, "Directory change successful.");
     }
@@ -1038,13 +1038,13 @@ static void get_absolute_fname(char *fname,
 
         /* absolute path, use as input */
         assert(strlen(file) < fname_len);
-	strcpy(fname, file);
+	strlcpy(fname, file, fname_len);
 
     } else {
 
         /* construct a file name based on our current directory */
         assert(strlen(dir) + 1 + strlen(file) < fname_len);
-        strcpy(fname, dir);
+        strlcpy(fname, dir, fname_len);
 
 	/* add a seperating '/' if we're not at the root */
 	if (fname[1] != '\0') {
@@ -1724,7 +1724,7 @@ static void send_readme(const ftp_session_t *f, int code)
     }
 
     /* create a README file name */
-    strcpy(file_name, f->dir);
+    strlcpy(file_name, f->dir, sizeof(file_name));
     strlcat(file_name, "/", sizeof(file_name));
     strlcat(file_name, README_FILE_NAME, sizeof(file_name));
 

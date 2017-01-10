@@ -238,7 +238,7 @@ int ftp_listener_init(ftp_listener_t *f,
     pthread_mutex_init(&f->mutex, NULL);
 
     assert(strlen(dir) < sizeof(f->dir));
-    strcpy(f->dir, dir);
+    strlcpy(f->dir, dir, sizeof(f->dir));
     f->listener_running = 0;
 
     f->shutdown_request_send_fd = pipefds[1];

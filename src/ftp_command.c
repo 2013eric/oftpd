@@ -95,7 +95,7 @@ int ftp_command_parse(const char *input, ftp_command_t *cmd)
     assert(match < NUM_COMMAND);
 
     /* copy our command */
-    strcpy(tmp.command, command_def[match].name);
+    strlcpy(tmp.command, command_def[match].name, sizeof(tmp.command));
 
     /* advance input past the command */
     input += strlen(command_def[match].name);
