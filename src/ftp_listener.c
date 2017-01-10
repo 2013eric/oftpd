@@ -507,7 +507,7 @@ static void *connection_handler(connection_info_t *info)
     } else {
 
         /* too many users */
-        sprintf(drop_reason, 
+        snprintf(drop_reason, sizeof(drop_reason),
           "Too many users logged in, dropping connection (%d logins maximum)", 
           f->max_connections);
         ftp_session_drop(&info->ftp_session, drop_reason);

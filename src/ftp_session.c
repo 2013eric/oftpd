@@ -352,7 +352,7 @@ static void reply(ftp_session_t *f, int code, const char *fmt, ...)
     assert(fmt != NULL);
 
     /* prepend our code to the buffer */
-    sprintf(buf, "%d", code);
+    snprintf(buf, sizeof(buf), "%d", code);
     buf[3] = ' ';
 
     /* add the formatted output of the caller to the buffer */
@@ -1749,7 +1749,7 @@ static void send_readme(const ftp_session_t *f, int code)
     /* convert our code to a buffer */
     assert(code >= 100);
     assert(code <= 999);
-    sprintf(code_str, "%03d-", code);
+    snprintf(code_str, sizeof(code_str), "%03d-", code);
 
     /* read and send */
     read_ret = read(fd, buf, sizeof(buf));

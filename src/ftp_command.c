@@ -351,7 +351,7 @@ static const char *parse_host_port(struct sockaddr_in *addr, const char *s)
     assert(octets[3] <= 255);
 
     /* convert our number to a IP/port */
-    sprintf(addr_str, "%d.%d.%d.%d", 
+    snprintf(addr_str, sizeof(addr_str), "%d.%d.%d.%d",
             octets[0], octets[1], octets[2], octets[3]);
     port = (octets[4] << 8) | octets[5];
 #ifdef HAVE_INET_ATON
