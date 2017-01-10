@@ -30,6 +30,7 @@ to end.
 #include <netdb.h>
 #include <netinet/tcp.h>
 #include <fcntl.h>
+#include <assert.h>
 
 #if TIME_WITH_SYS_TIME
 # include <sys/time.h>
@@ -42,7 +43,6 @@ to end.
 # endif
 #endif
 
-#include "daemon_assert.h"
 #include "telnet_session.h"
 #include "ftp_session.h"
 #include "ftp_listener.h"
@@ -92,11 +92,11 @@ int ftp_listener_init(ftp_listener_t *f,
     char buf[ADDR_BUF_LEN+1];
     const char *inet_ntop_ret;
 
-    daemon_assert(f != NULL);
-    daemon_assert(port >= 0);
-    daemon_assert(port < 65536);
-    daemon_assert(max_connections > 0);
-    daemon_assert(err != NULL);
+    assert(f != NULL);
+    assert(port >= 0);
+    assert(port < 65536);
+    assert(max_connections > 0);
+    assert(err != NULL);
 
     /* get our current directory */
     if (getcwd(dir, sizeof(dir)) == NULL) {
@@ -237,7 +237,7 @@ int ftp_listener_init(ftp_listener_t *f,
     f->inactivity_timeout = inactivity_timeout;
     pthread_mutex_init(&f->mutex, NULL);
 
-    daemon_assert(strlen(dir) < sizeof(f->dir));
+    assert(strlen(dir) < sizeof(f->dir));
     strcpy(f->dir, dir);
     f->listener_running = 0;
 
@@ -245,7 +245,7 @@ int ftp_listener_init(ftp_listener_t *f,
     f->shutdown_request_recv_fd = pipefds[0];
     pthread_cond_init(&f->shutdown_cond, NULL);
 
-    daemon_assert(invariant(f));
+    assert(invariant(f));
     return 1;
 }
 
@@ -256,8 +256,8 @@ int ftp_listener_start(ftp_listener_t *f, error_t *err)
     int ret_val;
     int error_code;
 
-    daemon_assert(invariant(f));
-    daemon_assert(err != NULL);
+    assert(invariant(f));
+    assert(err != NULL);
 
     error_code = pthread_create(&thread_id, 
                                 NULL, 
@@ -273,7 +273,7 @@ int ftp_listener_start(ftp_listener_t *f, error_t *err)
         ret_val = 0;
     }
 
-    daemon_assert(invariant(f));
+    assert(invariant(f));
 
     return ret_val;
 }
@@ -328,7 +328,7 @@ static void *connection_acceptor(ftp_listener_t *f)
 
     fd_set readfds;
 
-    daemon_assert(invariant(f));
+    assert(invariant(f));
 
     if (!watchdog_init(&f->watchdog, f->inactivity_timeout, &err)) {
         syslog(LOG_ERR, "Error initializing watchdog thread; %s", 
@@ -448,7 +448,7 @@ static char *addr2string(const sockaddr_storage_t *s)
     int error;
     char *ret_val;
 
-    daemon_assert(s != NULL);
+    assert(s != NULL);
 
 #ifdef INET6
     error = getnameinfo((struct sockaddr *)s, 
@@ -559,7 +559,7 @@ static void connection_handler_cleanup(connection_info_t *info)
 
 void ftp_listener_stop(ftp_listener_t *f)
 {
-    daemon_assert(invariant(f));
+    assert(invariant(f));
 
     /* write a byte to the listening thread - this will wake it up */
     write(f->shutdown_request_send_fd, "", 1);

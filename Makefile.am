@@ -15,8 +15,6 @@ oftpd_SOURCES = src/file_list.c 	\
 		src/watchdog.h 		\
 		src/error.c 		\
 		src/error.h 		\
-		src/af_portability.h 	\
-		src/daemon_assert.c 	\
-		src/daemon_assert.h
+		src/af_portability.h 
 dist_man_MANS = man/oftpd.8
 EXTRA_DIST = BUGS FAQ

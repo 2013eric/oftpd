@@ -12,7 +12,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
-#include "daemon_assert.h"
+#include <assert.h>
 #include "error.h"
 
 static int invariant(const error_t *err);
@@ -21,27 +21,27 @@ void error_init(error_t *err, int error_code, const char *desc_fmt, ...)
 {
     va_list args;
 
-    daemon_assert(err != NULL);
-    daemon_assert(error_code >= 0);
-    daemon_assert(desc_fmt != NULL);
+    assert(err != NULL);
+    assert(error_code >= 0);
+    assert(desc_fmt != NULL);
 
     err->error_code = error_code;
     va_start(args, desc_fmt);
     vsnprintf(err->desc, sizeof(err->desc), desc_fmt, args);
     va_end(args);
 
-    daemon_assert(invariant(err));
+    assert(invariant(err));
 }
 
 int error_get_error_code(const error_t *err)
 {
-    daemon_assert(invariant(err));
+    assert(invariant(err));
     return err->error_code;
 }
 
 const char *error_get_desc(const error_t *err)
 {
-    daemon_assert(invariant(err));
+    assert(invariant(err));
     return err->desc;
 }
 

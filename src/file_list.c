@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <ctype.h>
+#include <assert.h>
 
 #if TIME_WITH_SYS_TIME
 # include <sys/time.h>
@@ -21,7 +22,6 @@
 #endif
 
 #include "file_list.h"
-#include "daemon_assert.h"
 
 /* AIX requires this to be the first thing in the file.  */
 #ifndef __GNUC__
@@ -78,9 +78,9 @@ int file_nlst(int out, const char *cur_dir, const char *filespec)
     int i;
     char *file_name;
 
-    daemon_assert(out >= 0);
-    daemon_assert(is_valid_dir(cur_dir));
-    daemon_assert(filespec != NULL);
+    assert(out >= 0);
+    assert(is_valid_dir(cur_dir));
+    assert(filespec != NULL);
 
     if (filespec[0] == '/') {
         cur_dir = "";
@@ -163,9 +163,9 @@ int file_list(int out, const char *cur_dir, const char *filespec)
     char link[PATH_MAX+1];
     int link_len;
     
-    daemon_assert(out >= 0);
-    daemon_assert(is_valid_dir(cur_dir));
-    daemon_assert(filespec != NULL);
+    assert(out >= 0);
+    assert(is_valid_dir(cur_dir));
+    assert(filespec != NULL);
 
     filespec = skip_ls_options(filespec);
 
@@ -365,8 +365,8 @@ static void fdprintf(int fd, const char *fmt, ...)
     int amt_written;
     int write_ret;
 
-    daemon_assert(fd >= 0);
-    daemon_assert(fmt != NULL);
+    assert(fd >= 0);
+    assert(fmt != NULL);
 
     va_start(ap, fmt);
     buflen = vsnprintf(buf, sizeof(buf), fmt, ap);
@@ -395,7 +395,7 @@ static void fdprintf(int fd, const char *fmt, ...)
 const char *
 skip_ls_options(const char *filespec)
 {
-    daemon_assert(filespec != NULL);
+    assert(filespec != NULL);
 
     for (;;) {
         /* end when we've passed all options */
@@ -424,7 +424,7 @@ skip_ls_options(const char *filespec)
         }
     }
 
-    daemon_assert(filespec != NULL);
+    assert(filespec != NULL);
 
     return filespec;
 }

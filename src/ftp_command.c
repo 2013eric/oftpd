@@ -7,9 +7,9 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <assert.h>
 #include "ftp_command.h"
 #include "af_portability.h"
-#include "daemon_assert.h"
 
 /* argument types */
 #define ARG_NONE              0
@@ -75,8 +75,8 @@ int ftp_command_parse(const char *input, ftp_command_t *cmd)
     int c;
     const char *optional_number;
 
-    daemon_assert(input != NULL);
-    daemon_assert(cmd != NULL);
+    assert(input != NULL);
+    assert(cmd != NULL);
 
     /* see if our input starts with a valid command */
     match = -1;
@@ -91,8 +91,8 @@ int ftp_command_parse(const char *input, ftp_command_t *cmd)
     if (match == -1) {
         return 0;
     }
-    daemon_assert(match >= 0);
-    daemon_assert(match < NUM_COMMAND);
+    assert(match >= 0);
+    assert(match < NUM_COMMAND);
 
     /* copy our command */
     strcpy(tmp.command, command_def[match].name);
@@ -282,7 +282,7 @@ int ftp_command_parse(const char *input, ftp_command_t *cmd)
 	    break;
 
         default:
-	    daemon_assert(0);
+	    assert(0);
     } 
 
     /* check for our ending newline */
@@ -300,8 +300,8 @@ static const char *copy_string(char *dst, const char *src)
 {
     int i;
 
-    daemon_assert(dst != NULL);
-    daemon_assert(src != NULL);
+    assert(dst != NULL);
+    assert(src != NULL);
 
     for (i=0; (i<=MAX_STRING_LEN) && (src[i]!='\0') && (src[i]!='\n'); i++) {
         dst[i] = src[i];
@@ -320,8 +320,8 @@ static const char *parse_host_port(struct sockaddr_in *addr, const char *s)
     int port;
     struct in_addr in_addr;
 
-    daemon_assert(addr != NULL);
-    daemon_assert(s != NULL);
+    assert(addr != NULL);
+    assert(s != NULL);
 
     /* scan in 5 pairs of "#," */
     for (i=0; i<5; i++) {
@@ -341,14 +341,14 @@ static const char *parse_host_port(struct sockaddr_in *addr, const char *s)
         return NULL;
     }
 
-    daemon_assert(octets[0] >= 0);
-    daemon_assert(octets[0] <= 255);
-    daemon_assert(octets[1] >= 0);
-    daemon_assert(octets[1] <= 255);
-    daemon_assert(octets[2] >= 0);
-    daemon_assert(octets[2] <= 255);
-    daemon_assert(octets[3] >= 0);
-    daemon_assert(octets[3] <= 255);
+    assert(octets[0] >= 0);
+    assert(octets[0] <= 255);
+    assert(octets[1] >= 0);
+    assert(octets[1] <= 255);
+    assert(octets[2] >= 0);
+    assert(octets[2] <= 255);
+    assert(octets[3] >= 0);
+    assert(octets[3] <= 255);
 
     /* convert our number to a IP/port */
     sprintf(addr_str, "%d.%d.%d.%d", 
@@ -406,7 +406,7 @@ static const char *parse_host_port_long(sockaddr_storage_t *sa, const char *s)
 
     /* parse address */
     for (i=0; i<addr_len; i++) {
-	daemon_assert(i < sizeof(addr)/sizeof(addr[0]));
+	assert(i < sizeof(addr)/sizeof(addr[0]));
         s = parse_number(&tmp, s, 255);
 	addr[i] = tmp;
 	if (s == NULL) {
@@ -430,7 +430,7 @@ static const char *parse_host_port_long(sockaddr_storage_t *sa, const char *s)
 	    return NULL;
 	}
 	s++;
-	daemon_assert(i < sizeof(port)/sizeof(port[0]));
+	assert(i < sizeof(port)/sizeof(port[0]));
 	s = parse_number(&tmp, s, 255);
         port[i] = tmp;
     }
@@ -577,8 +577,8 @@ static const char *parse_number(int *num, const char *s, int max_num)
     int tmp;
     int cur_digit;
     
-    daemon_assert(s != NULL);
-    daemon_assert(num != NULL);
+    assert(s != NULL);
+    assert(num != NULL);
     
     /* handle first character */
     if (!isdigit(*s)) {
@@ -601,8 +601,8 @@ static const char *parse_number(int *num, const char *s, int max_num)
         s++;
     }
 
-    daemon_assert(tmp >= 0);
-    daemon_assert(tmp <= max_num);
+    assert(tmp >= 0);
+    assert(tmp <= max_num);
 
     /* return the result */
     *num = tmp;
@@ -615,8 +615,8 @@ static const char *parse_offset(off_t *ofs, const char *s)
     int cur_digit;
     off_t max_ofs;
 
-    daemon_assert(ofs != NULL);
-    daemon_assert(s != NULL);
+    assert(ofs != NULL);
+    assert(s != NULL);
 
     /* calculate maximum allowable offset based on size of off_t */
     if (sizeof(off_t) == 8) {
@@ -628,7 +628,7 @@ static const char *parse_offset(off_t *ofs, const char *s)
     } else {
         max_ofs = 0;
     }
-    daemon_assert(max_ofs != 0);
+    assert(max_ofs != 0);
     
     /* handle first character */
     if (!isdigit(*s)) {

@@ -1,6 +1,6 @@
 #include <config.h>
 #include <unistd.h>
-#include "daemon_assert.h"
+#include <assert.h>
 #include "watchdog.h"
 
 static int invariant(watchdog_t *w);
@@ -13,9 +13,9 @@ int watchdog_init(watchdog_t *w, int inactivity_timeout, error_t *err)
     pthread_t thread_id;
     int error_code;
 
-    daemon_assert(w != NULL);
-    daemon_assert(inactivity_timeout > 0);
-    daemon_assert(err != NULL);
+    assert(w != NULL);
+    assert(inactivity_timeout > 0);
+    assert(err != NULL);
 
     pthread_mutex_init(&w->mutex, NULL);
     w->inactivity_timeout = inactivity_timeout;
@@ -30,14 +30,14 @@ int watchdog_init(watchdog_t *w, int inactivity_timeout, error_t *err)
     }
     pthread_detach(thread_id);
 
-    daemon_assert(invariant(w));
+    assert(invariant(w));
 
     return 1;
 }
 
 void watchdog_add_watched(watchdog_t *w, watched_t *watched)
 {
-    daemon_assert(invariant(w));
+    assert(invariant(w));
 
     pthread_mutex_lock(&w->mutex);
 
@@ -47,14 +47,14 @@ void watchdog_add_watched(watchdog_t *w, watched_t *watched)
 
     pthread_mutex_unlock(&w->mutex);
 
-    daemon_assert(invariant(w));
+    assert(invariant(w));
 }
 
 void watchdog_defer_watched(watched_t *watched)
 {
     watchdog_t *w;
 
-    daemon_assert(invariant(watched->watchdog));
+    assert(invariant(watched->watchdog));
 
     w = watched->watchdog;
     pthread_mutex_lock(&w->mutex);
@@ -63,14 +63,14 @@ void watchdog_defer_watched(watched_t *watched)
     insert(w, watched);
 
     pthread_mutex_unlock(&w->mutex);
-    daemon_assert(invariant(w));
+    assert(invariant(w));
 }
 
 void watchdog_remove_watched(watched_t *watched)
 {
     watchdog_t *w;
 
-    daemon_assert(invariant(watched->watchdog));
+    assert(invariant(watched->watchdog));
 
     w = watched->watchdog;
     pthread_mutex_lock(&w->mutex);
@@ -78,7 +78,7 @@ void watchdog_remove_watched(watched_t *watched)
     delete(w, watched);
 
     pthread_mutex_unlock(&w->mutex);
-    daemon_assert(invariant(w));
+    assert(invariant(w));
 }
 
 static void insert(watchdog_t *w, watched_t *watched)
@@ -124,24 +124,24 @@ static void delete(watchdog_t *w, watched_t *watched)
     }
 
     if (watched->newer == NULL) {
-        daemon_assert(w->newest == watched);
+        assert(w->newest == watched);
 	w->newest = w->newest->older;
         if (w->newest != NULL) {
 	    w->newest->newer = NULL;
 	}
     } else {
-        daemon_assert(w->newest != watched);
+        assert(w->newest != watched);
 	watched->newer->older = watched->older;
     }
 
     if (watched->older == NULL) {
-        daemon_assert(w->oldest == watched);
+        assert(w->oldest == watched);
 	w->oldest = w->oldest->newer;
         if (w->oldest != NULL) {
 	    w->oldest->older = NULL;
 	}
     } else {
-        daemon_assert(w->oldest != watched);
+        assert(w->oldest != watched);
 	watched->older->newer = watched->newer;
     }
 

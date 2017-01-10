@@ -15,7 +15,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
-#include "daemon_assert.h"
+#include <assert.h>
 #include "telnet_session.h"
 
 /* characters to process */
@@ -59,9 +59,9 @@ static int max_input_read(telnet_session_t *t);
 /* initialize a telnet session */
 void telnet_session_init(telnet_session_t *t, int in, int out)
 {
-    daemon_assert(t != NULL);
-    daemon_assert(in >= 0);
-    daemon_assert(out >= 0);
+    assert(t != NULL);
+    assert(in >= 0);
+    assert(out >= 0);
 
     t->in_fd = in;
     t->in_errno = 0;
@@ -79,7 +79,7 @@ void telnet_session_init(telnet_session_t *t, int in, int out)
 
     process_data(t, 0);
 
-    daemon_assert(invariant(t));
+    assert(invariant(t));
 }
 
 /* print output */
@@ -88,23 +88,23 @@ int telnet_session_print(telnet_session_t *t, const char *s)
     int len;
     int amt_printed;
 
-    daemon_assert(invariant(t));
+    assert(invariant(t));
 
     len = strlen(s);
     if (len == 0) {
-        daemon_assert(invariant(t));
+        assert(invariant(t));
 	return 1;
     }
 
     amt_printed = 0;
     do {
         if ((t->out_errno != 0) || (t->out_eof != 0)) {
-            daemon_assert(invariant(t));
+            assert(invariant(t));
             return 0;
         }
         while ((amt_printed < len) && (t->out_buflen < BUF_LEN))
 	{
-            daemon_assert(s[amt_printed] != '\0');
+            assert(s[amt_printed] != '\0');
             add_outgoing_char(t, s[amt_printed]);
             amt_printed++;
 	}
@@ -113,29 +113,29 @@ int telnet_session_print(telnet_session_t *t, const char *s)
 
     while (t->out_buflen > 0) {
         if ((t->out_errno != 0) || (t->out_eof != 0)) {
-            daemon_assert(invariant(t));
+            assert(invariant(t));
             return 0;
         }
         process_data(t, 1);
     } 
 
-    daemon_assert(invariant(t));
+    assert(invariant(t));
     return 1;
 }
 
 /* print a line output */
 int telnet_session_println(telnet_session_t *t, const char *s)
 {
-    daemon_assert(invariant(t));
+    assert(invariant(t));
     if (!telnet_session_print(t, s)) {
-        daemon_assert(invariant(t));
+        assert(invariant(t));
         return 0;
     }
     if (!telnet_session_print(t, "\015\012")) {
-        daemon_assert(invariant(t));
+        assert(invariant(t));
         return 0;
     }
-    daemon_assert(invariant(t));
+    assert(invariant(t));
     return 1;
 }
 
@@ -144,27 +144,27 @@ int telnet_session_readln(telnet_session_t *t, char *buf, int buflen)
 {
     int amt_read;
 
-    daemon_assert(invariant(t));
+    assert(invariant(t));
     amt_read = 0;
     for (;;) {
         if ((t->in_errno != 0) || (t->in_eof != 0)) {
-            daemon_assert(invariant(t));
+            assert(invariant(t));
 	    return 0;
 	}
 	while (t->in_buflen > 0) {
 	    if (amt_read == buflen-1) {
 	        buf[amt_read] = '\0';
-                daemon_assert(invariant(t));
+                assert(invariant(t));
 		return 1;
 	    }
-            daemon_assert(amt_read >= 0);
-            daemon_assert(amt_read < buflen);
+            assert(amt_read >= 0);
+            assert(amt_read < buflen);
 	    buf[amt_read] = use_incoming_char(t);
 	    if (buf[amt_read] == '\012') {
-                daemon_assert(amt_read+1 >= 0);
-                daemon_assert(amt_read+1 < buflen);
+                assert(amt_read+1 >= 0);
+                assert(amt_read+1 < buflen);
 	        buf[amt_read+1] = '\0';
-                daemon_assert(invariant(t));
+                assert(invariant(t));
 	        return 1;
 	    }
             amt_read++;
@@ -175,7 +175,7 @@ int telnet_session_readln(telnet_session_t *t, char *buf, int buflen)
 
 void telnet_session_destroy(telnet_session_t *t)
 {
-    daemon_assert(invariant(t));
+    assert(invariant(t));
 
     close(t->in_fd);
     if (t->out_fd != t->in_fd) {
@@ -245,7 +245,7 @@ static void read_incoming_data(telnet_session_t *t)
     size_t i;
 
     /* read as much data as we have buffer space for */
-    daemon_assert(max_input_read(t) <= BUF_LEN);
+    assert(max_input_read(t) <= BUF_LEN);
     read_ret = read(t->in_fd, buf, max_input_read(t));
 
     /* handle three possible read results */
@@ -326,8 +326,8 @@ static void process_incoming_char(telnet_session_t *t, int c)
 /* add a single character, wrapping buffer if necessary (should never occur) */
 static void add_incoming_char(telnet_session_t *t, int c)
 {
-    daemon_assert(t->in_add >= 0);
-    daemon_assert(t->in_add < BUF_LEN);
+    assert(t->in_add >= 0);
+    assert(t->in_add < BUF_LEN);
     t->in_buf[t->in_add] = c;
     t->in_add++;
     if (t->in_add == BUF_LEN) {
@@ -348,8 +348,8 @@ static int use_incoming_char(telnet_session_t *t)
 {
     int c;
 
-    daemon_assert(t->in_take >= 0);
-    daemon_assert(t->in_take < BUF_LEN);
+    assert(t->in_take >= 0);
+    assert(t->in_take < BUF_LEN);
     c = t->in_buf[t->in_take];
     t->in_take++;
     if (t->in_take == BUF_LEN) {
@@ -363,8 +363,8 @@ static int use_incoming_char(telnet_session_t *t)
 /* add a single character, hopefully will never happen :) */
 static void add_outgoing_char(telnet_session_t *t, int c)
 {
-    daemon_assert(t->out_add >= 0);
-    daemon_assert(t->out_add < BUF_LEN);
+    assert(t->out_add >= 0);
+    assert(t->out_add < BUF_LEN);
     t->out_buf[t->out_add] = c;
     t->out_add++;
     if (t->out_add == BUF_LEN) {
@@ -388,17 +388,17 @@ static void write_outgoing_data(telnet_session_t *t)
     if (t->out_take < t->out_add) {
         /* handle a buffer that looks like this:       */
 	/*     |-- empty --|-- data --|-- empty --|    */
-        daemon_assert(t->out_take >= 0);
-        daemon_assert(t->out_take < BUF_LEN);
-        daemon_assert(t->out_buflen > 0);
-        daemon_assert(t->out_buflen + t->out_take <= BUF_LEN);
+        assert(t->out_take >= 0);
+        assert(t->out_take < BUF_LEN);
+        assert(t->out_buflen > 0);
+        assert(t->out_buflen + t->out_take <= BUF_LEN);
         write_ret = write(t->out_fd, t->out_buf + t->out_take, t->out_buflen);
     } else {
         /* handle a buffer that looks like this:       */
 	/*     |-- data --|-- empty --|-- data --|     */
-        daemon_assert(t->out_take >= 0);
-        daemon_assert(t->out_take < BUF_LEN);
-        daemon_assert((BUF_LEN - t->out_take) > 0);
+        assert(t->out_take >= 0);
+        assert(t->out_take < BUF_LEN);
+        assert((BUF_LEN - t->out_take) > 0);
         write_ret = write(t->out_fd, 
 	                  t->out_buf + t->out_take, 
 			  BUF_LEN - t->out_take);
@@ -424,7 +424,7 @@ static int max_input_read(telnet_session_t *t)
     int max_in;
     int max_out;
 
-    daemon_assert(invariant(t));
+    assert(invariant(t));
 
     /* figure out how much space is available in the input buffer */
     if (t->in_buflen < BUF_LEN) {
@@ -440,7 +440,7 @@ static int max_input_read(telnet_session_t *t)
         max_out = 0;
     }
 
-    daemon_assert(invariant(t));
+    assert(invariant(t));
 
     /* return the minimum of the two values */
     return (max_in < max_out) ? max_in : max_out;
@@ -519,14 +519,14 @@ int main()
     unsigned newaddrlen;
     int i;
 
-    daemon_assert((fd = socket(AF_INET, SOCK_STREAM, 0)) != -1);
+    assert((fd = socket(AF_INET, SOCK_STREAM, 0)) != -1);
     val = 1;
-    daemon_assert(setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val)) 
+    assert(setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val)) 
         == 0);
     addr.sin_port = htons(23);
     addr.sin_addr.s_addr = INADDR_ANY;
-    daemon_assert(bind(fd, &addr, sizeof(addr)) == 0);
-    daemon_assert(listen(fd, SOMAXCONN) == 0);
+    assert(bind(fd, &addr, sizeof(addr)) == 0);
+    assert(listen(fd, SOMAXCONN) == 0);
 
     signal(SIGPIPE, SIG_IGN);
     while ((newfd = accept(fd, &newaddr, &newaddrlen)) >= 0) {
