@@ -1,9 +1,9 @@
 AC_INIT([oftpd], [0.3.7])
 AC_CONFIG_HEADERS([src/config.h])
 AC_CONFIG_SRCDIR([src/oftpd.c])
-AC_CONFIG_FILES([Makefile src/Makefile man/Makefile])
+AC_CONFIG_FILES([Makefile])
 
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([subdir-objects])
 
 dnl Checks for programs.
 AC_PROG_AWK
