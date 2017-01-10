@@ -13,6 +13,7 @@ Makefile.in
 # http://www.gnu.org/software/autoconf
 
 config.h*
+stamp-h1
 /autom4te.cache
 /autoscan.log
 /autoscan-*.log
@@ -27,7 +28,6 @@ config.h*
 /depcomp
 /install-sh
 /missing
-/stamp-h1
 
 # oftpd
 /oftpd
