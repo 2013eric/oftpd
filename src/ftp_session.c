@@ -1048,11 +1048,11 @@ static void get_absolute_fname(char *fname,
 
 	/* add a seperating '/' if we're not at the root */
 	if (fname[1] != '\0') {
-            strcat(fname, "/");
+            strlcat(fname, "/", fname_len);
 	}
 
         /* and of course the actual file name */
-        strcat(fname, file);
+        strlcat(fname, file, fname_len);
 
     }
 }
@@ -1725,8 +1725,8 @@ static void send_readme(const ftp_session_t *f, int code)
 
     /* create a README file name */
     strcpy(file_name, f->dir);
-    strcat(file_name, "/");
-    strcat(file_name, README_FILE_NAME);
+    strlcat(file_name, "/", sizeof(file_name));
+    strlcat(file_name, README_FILE_NAME, sizeof(file_name));
 
     /* open our file */
     fd = open(file_name, O_RDONLY);

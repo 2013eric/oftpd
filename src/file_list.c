@@ -88,7 +88,7 @@ int file_nlst(int out, const char *cur_dir, const char *filespec)
     } else {
         strcpy(pattern, cur_dir);
 	if ((cur_dir[0] != '/') || (cur_dir[1] != '\0')) {
-            strcat(pattern, "/");
+            strlcat(pattern, "/", sizeof(pattern));
 	}
         dir_len = strlen(pattern);
     }
@@ -98,7 +98,7 @@ int file_nlst(int out, const char *cur_dir, const char *filespec)
         fdprintf(out, "Error; Path name too long\r\n");
 	return 0;
     }
-    strcat(pattern, filespec);
+    strlcat(pattern, filespec, sizeof(pattern));
 
     /* do a glob() */
     memset(&glob_buf, 0, sizeof(glob_buf));
@@ -175,7 +175,7 @@ int file_list(int out, const char *cur_dir, const char *filespec)
     } else {
         strcpy(pattern, cur_dir);
 	if ((cur_dir[0] != '/') || (cur_dir[1] != '\0')) {
-            strcat(pattern, "/");
+            strlcat(pattern, "/", sizeof(pattern));
 	}
         dir_len = strlen(pattern);
     }
@@ -185,7 +185,7 @@ int file_list(int out, const char *cur_dir, const char *filespec)
         fdprintf(out, "Error; Path name too long\r\n");
 	return 0;
     }
-    strcat(pattern, filespec);
+    strlcat(pattern, filespec, sizeof(pattern));
 
     /* do a glob() */
     memset(&glob_buf, 0, sizeof(glob_buf));
