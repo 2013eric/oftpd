@@ -1,7 +1,3 @@
-/*
- * $Id: error.h,v 1.1 2000/03/29 01:20:07 shane Exp $
- */
-
 #ifndef ERROR_H
 #define ERROR_H
 

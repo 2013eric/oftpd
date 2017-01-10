@@ -1,7 +1,3 @@
-/* 
- * $Id: ftp_session.c,v 1.47 2004/03/25 20:46:35 shane Exp $
- */
-
 #include <config.h>
 #include <string.h>
 #include <stdio.h>

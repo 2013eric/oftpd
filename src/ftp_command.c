@@ -1,7 +1,3 @@
-/*
- * $Id: ftp_command.c,v 1.19 2004/03/25 20:46:48 shane Exp $
- */
-
 #include <config.h>
 #include <string.h>
 #include <ctype.h>

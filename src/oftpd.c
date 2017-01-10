@@ -1,7 +1,3 @@
-/*
- * $Id: oftpd.c,v 1.20 2001/05/27 22:40:18 shane Exp $
- */
-
 #include <config.h>
 #include <stdio.h>
 #include <unistd.h>

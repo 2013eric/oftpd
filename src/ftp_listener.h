@@ -1,7 +1,3 @@
-/* 
- * $Id: ftp_listener.h,v 1.11 2001/04/18 21:41:48 shane Exp $
- */
-
 #ifndef FTP_LISTENER_H
 #define FTP_LISTENER_H
 

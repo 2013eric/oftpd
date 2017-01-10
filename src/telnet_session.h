@@ -1,7 +1,3 @@
-/* 
- * $Id: telnet_session.h,v 1.2 2000/02/19 06:56:39 shane Exp $
- */
-
 #ifndef TELNET_SESSION_H
 #define TELNET_SESSION_H
 

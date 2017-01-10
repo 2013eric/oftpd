@@ -1,7 +1,5 @@
 /*
 
-$Id: ftp_listener.c,v 1.30 2001/05/10 23:29:28 shane Exp $
- 
 This is the code that waits for client connections and creates the
 threads that handle them.  When ftp_listener_init() is called, it binds
 to the appropriate socket and sets up the other values for the

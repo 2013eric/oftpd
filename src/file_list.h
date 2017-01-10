@@ -1,7 +1,3 @@
-/* 
- * $Id: file_list.h,v 1.5 2000/03/30 07:39:44 shane Exp $
- */
-
 #ifndef FILE_LIST_H
 #define FILE_LIST_H
 

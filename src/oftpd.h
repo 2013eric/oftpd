@@ -1,7 +1,3 @@
-/*
- * $Id: oftpd.h,v 1.5 2001/03/26 22:41:05 shane Exp $
- */
-
 #ifndef OFTPD_H
 #define OFTPD_H
 

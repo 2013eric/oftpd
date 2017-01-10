@@ -1,7 +1,3 @@
-/* 
- * $Id: watchdog.h,v 1.7 2001/03/28 22:30:40 shane Exp $
- */
-
 #ifndef WATCHDOG_H
 #define WATCHDOG_H
 

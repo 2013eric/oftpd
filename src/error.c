@@ -1,6 +1,4 @@
 /*
- * $Id: error.c,v 1.4 2001/04/18 21:40:59 shane Exp $
- *
  * This data type allows modules to cleanly return error information in a 
  * relatively clean fashion.  It only includes an error number and a
  * description string right now.  It could be modified to include a large

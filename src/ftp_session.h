@@ -1,6 +1,4 @@
 /* 
- * $Id: ftp_session.h,v 1.13 2001/05/10 23:28:57 shane Exp $
- *
  * Restrictions:
  *  - Only stream MODE is supported.
  *  - Only "ftp" or "anonymous" accepted as a user.

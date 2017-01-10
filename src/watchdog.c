@@ -1,7 +1,3 @@
-/*
- * $Id: watchdog.c,v 1.11 2001/04/18 21:41:32 shane Exp $
- */
-
 #include <config.h>
 #include <unistd.h>
 #include "daemon_assert.h"

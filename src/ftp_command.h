@@ -1,6 +1,4 @@
 /* 
- * $Id: ftp_command.h,v 1.5 2001/03/20 00:21:11 shane Exp $
- *
  * The following comands are parsed:
  *
  * USER <SP> <username>

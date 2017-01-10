@@ -1,7 +1,3 @@
-/*
- * $Id: file_list.c,v 1.15 2004/03/25 20:46:02 shane Exp $
- */
-
 #include <config.h>
 #include <stdio.h>
 #include <limits.h>

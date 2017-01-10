@@ -1,7 +1,3 @@
-/*
- * $Id: telnet_session.c,v 1.16 2001/04/18 21:41:18 shane Exp $
- */
-
 #include <config.h>
 
 #if TIME_WITH_SYS_TIME
