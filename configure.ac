@@ -3,7 +3,8 @@ AC_CONFIG_HEADERS([src/config.h])
 AC_CONFIG_SRCDIR([src/oftpd.c])
 AC_CONFIG_FILES([Makefile])
 
-AM_INIT_AUTOMAKE([subdir-objects])
+AM_INIT_AUTOMAKE([1.11 subdir-objects])
+AM_SILENT_RULES([yes])
 
 dnl Checks for programs.
 AC_PROG_AWK
