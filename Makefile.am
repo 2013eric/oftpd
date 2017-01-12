@@ -18,3 +18,4 @@ oftpd_SOURCES = src/file_list.c 	\
 		src/af_portability.h 
 dist_man_MANS = man/oftpd.8
 EXTRA_DIST = BUGS FAQ
+AM_FLAGS = -Wall
