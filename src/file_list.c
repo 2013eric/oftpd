@@ -23,21 +23,6 @@
 
 #include "file_list.h"
 
-/* AIX requires this to be the first thing in the file.  */
-#ifndef __GNUC__
-# if HAVE_ALLOCA_H
-#  include <alloca.h>
-# else
-#  ifdef _AIX
-#pragma alloca
-#  else
-#   ifndef alloca /* predefined by HP cc +Olibcalls */
-char *alloca ();
-#   endif
-#  endif
-# endif
-#endif
-
 /* GLOB_PERIOD is defined in Linux but not Solaris */
 #ifndef GLOB_PERIOD
 #define GLOB_PERIOD 0
@@ -211,11 +196,7 @@ int file_list(int out, const char *cur_dir, const char *filespec)
     }
 
     /* make a buffer to store our information */
-#ifdef HAVE_ALLOCA
     file_info = (file_info_t *)alloca(sizeof(file_info_t) * glob_buf.gl_pathc);
-#else
-    file_info = (file_info_t *)malloc(sizeof(file_info_t) * glob_buf.gl_pathc);
-#endif
     if (file_info == NULL) {
         fdprintf(out, "Error; Out of memory\r\n");
 	globfree(&glob_buf);
@@ -329,9 +310,6 @@ int file_list(int out, const char *cur_dir, const char *filespec)
     }
 
     /* free memory & return */
-#ifndef HAVE_ALLOCA
-    free(file_info);
-#endif 
     globfree(&glob_buf);
     return 1;
 }
