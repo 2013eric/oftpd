@@ -196,7 +196,7 @@ int file_list(int out, const char *cur_dir, const char *filespec)
     }
 
     /* make a buffer to store our information */
-    file_info = (file_info_t *)alloca(sizeof(file_info_t) * glob_buf.gl_pathc);
+    file_info = alloca(sizeof(file_info_t) * glob_buf.gl_pathc);
     if (file_info == NULL) {
         fdprintf(out, "Error; Out of memory\r\n");
 	globfree(&glob_buf);

@@ -379,7 +379,7 @@ static void *connection_acceptor(ftp_listener_t *f)
                  continue;
              }
 
-             info = (connection_info_t *)malloc(sizeof(connection_info_t));
+             info = malloc(sizeof(connection_info_t));
              if (info == NULL) {
                  syslog(LOG_CRIT, 
                      "out of memory, FTP server dropping connection");
