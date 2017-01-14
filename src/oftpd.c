@@ -11,6 +11,8 @@
 #include <syslog.h>
 #include <pthread.h>
 #include <stdlib.h>
+#include <getopt.h>
+
 #include "oftpd.h"
 #include "ftp_listener.h"
 #include "error.h"
@@ -23,9 +25,6 @@ static void print_usage(const char *error);
 
 int main(int argc, char *argv[])
 {
-    int i;
-    
-    long num;
     char *endptr;
     int port;
     int max_clients;
@@ -67,109 +66,95 @@ int main(int argc, char *argv[])
     detach = 1;
     log_facility = LOG_FTP;
 
-    /* check our command-line arguments */
-    /* we're stubbornly refusing to use getopt(), because we can */
-    /* :) */ 
-    for (i=1; i<argc; i++) {
-        
-        /* flags/optional arguments */
-        if (argv[i][0] == '-') {
-            if (strcmp(argv[i], "-p") == 0 
-                || strcmp(argv[i], "--port") == 0) {
-                if (++i >= argc) {
-                    print_usage("missing port number");
-                    exit(1);
-                }
-                num = strtol(argv[i], &endptr, 0);
-                if ((num < MIN_PORT) || (num > MAX_PORT) || (*endptr != '\0')) {
+    extern char *optarg;
+    extern int optind, optopt, opterr, optreset;
 
-                    snprintf(temp_buf, sizeof(temp_buf), 
-                             "port must be a number between %d and %d",
-                             MIN_PORT, MAX_PORT);
-                    print_usage(temp_buf);
+    static struct option longopts[] = {
+        {"port",        required_argument, NULL, 'p'},
+        {"interface",   required_argument, NULL, 'i'},
+        {"max-clients", required_argument, NULL, 'm'},
+        {"local",       required_argument, NULL, 'l'},
+        {"nodetach",    no_argument,       NULL, 'N'},
+        {"help",        no_argument,       NULL, 'h'},
+        { 0 }
+    };
 
-                    exit(1);
-                }
-                port = num;
-            } else if (strcmp(argv[i], "-h") == 0
-                       || strcmp(argv[i], "--help") == 0) {
-                print_usage(NULL);
-                exit(0);
-            } else if (strcmp(argv[i], "-i") == 0
-                       || strcmp(argv[i], "--interface") == 0) {
-                if (++i >= argc) {
-                    print_usage("missing interface");
-                    exit(1);
-                }
-                address = argv[i];
-            } else if (strcmp(argv[i], "-m") == 0
-                       || strcmp(argv[i], "--max-clients") == 0) {
-                if (++i >= argc) {
-                    print_usage("missing number of max clients");
-                    exit(1);
-                }
-                num = strtol(argv[i], &endptr, 0);
-                if ((num < MIN_NUM_CLIENTS) || (num > MAX_NUM_CLIENTS) 
-                    || (*endptr != '\0')) {
-
-                    snprintf(temp_buf, sizeof(temp_buf),
-                        "max clients must be a number between %d and %d",
-                        MIN_NUM_CLIENTS, MAX_NUM_CLIENTS);
-                    print_usage(temp_buf);
-
-                    exit(1);
-                }
-                max_clients = num;
-            } else if (strcmp(argv[i], "-N") == 0 
-                       || strcmp(argv[i], "--nodetach") == 0) {
-                detach = 0;
-            } else if (strcmp(argv[i], "-l") == 0
-                       || strcmp(argv[i], "--local") == 0) {
-                if (++i >= argc) {
-                    print_usage("missing number for local facility logging");
-                    exit(1);
-                }
-                switch (argv[i][0]) {
-                    case '0': 
-                        log_facility = LOG_LOCAL0;
-                        break;
-                    case '1': 
-                        log_facility = LOG_LOCAL1;
-                        break;
-                    case '2': 
-                        log_facility = LOG_LOCAL2;
-                        break;
-                    case '3': 
-                        log_facility = LOG_LOCAL3;
-                        break;
-                    case '4': 
-                        log_facility = LOG_LOCAL4;
-                        break;
-                    case '5': 
-                        log_facility = LOG_LOCAL5;
-                        break;
-                    case '6': 
-                        log_facility = LOG_LOCAL6;
-                        break;
-                    case '7': 
-                        log_facility = LOG_LOCAL7;
-                        break;
-                }
-            } else {
+    int ch;
+    while ((ch = getopt_long(argc, argv, "p:i:m:l:Nh", longopts, NULL)) != -1)
+        switch (ch) {
+        case 'p': {
+            long num = strtol(optarg, &endptr, 0);
+            if (num < MIN_PORT || num > MAX_PORT || *endptr != '\0') {
+                snprintf(temp_buf, sizeof(temp_buf), "port must be a number between "
+                    "%d and %d", MIN_PORT, MAX_PORT);
+                print_usage(temp_buf);
+                exit(1);
+            }
+            port = num;
+            break;
+        }
+        case 'i':
+            address = optarg;
+            break;
+        case 'm': {
+            long num = strtol(optarg, &endptr, 0);
+            if (num < MIN_NUM_CLIENTS || num > MAX_NUM_CLIENTS || *endptr != '\0') {
+                snprintf(temp_buf, sizeof(temp_buf), "max clients must be a number "
+                    "between %d and %d", MIN_NUM_CLIENTS, MAX_NUM_CLIENTS);
+                print_usage(temp_buf);
+                exit(1);
+            }
+            max_clients = num;
+            break;
+        }
+        case 'l':
+            switch (optarg[0]) {
+	    case '0':
+		log_facility = LOG_LOCAL0;
+		break;
+	    case '1':
+		log_facility = LOG_LOCAL1;
+		break;
+	    case '2':
+		log_facility = LOG_LOCAL2;
+		break;
+	    case '3':
+		log_facility = LOG_LOCAL3;
+		break;
+	    case '4':
+		log_facility = LOG_LOCAL4;
+		break;
+	    case '5':
+		log_facility = LOG_LOCAL5;
+		break;
+	    case '6':
+		log_facility = LOG_LOCAL6;
+		break;
+	    case '7':
+		log_facility = LOG_LOCAL7;
+		break;
+            default:
                 print_usage("unknown option");
                 exit(1);
-            }
+	    }
+        case 'N':
+            detach = 0;
+            break;
+        case 'h':
+            print_usage(NULL);
+            exit(0);
+        case '?':
+            exit(1);
+        }
 
-        /* required parameters */
+    for (int i = optind; i < argc; i++) {
+        if (user_ptr == NULL) {
+            user_ptr = argv[i];
+        } else if (dir_ptr == NULL) {
+            dir_ptr = argv[i];
         } else {
-            if (user_ptr == NULL) {
-                user_ptr = argv[i];
-            } else if (dir_ptr == NULL) {
-                dir_ptr = argv[i];
-            } else {
-                print_usage("too many arguments on the command line");
-                exit(1);
-            }
+            print_usage("too many arguments on the command line");
+            exit(1);
         }
     }
     if ((user_ptr == NULL) || (dir_ptr == NULL)) {
