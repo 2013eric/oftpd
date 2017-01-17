@@ -241,21 +241,8 @@ static void print_usage(const char *error)
     if (error != NULL) {
         fprintf(stderr, "%s: %s\n", exe_name, error);
     }
-    fprintf(stderr, 
-           " Syntax: %s [ options... ] user_name root_directory\n", exe_name);
-    fprintf(stderr, 
-           " Options:\n"
-           " -p, --port <num>\n"
-           "     Set the port to listen on (Default: %d)\n"
-           " -i, --interface <IP Address>\n"
-           "     Set the interface to listen on (Default: all)\n"
-           " -m, --max-clients <num>\n"
-           "     Set the number of clients allowed at one time (Default: %d)\n"
-           "-l, --local <local-logging>\n"
-           "     Use LOCAL facility for syslog, local-logging is 0 to 7\n"
-           " -N, --nodetach\n"
-           "     Do not detach from TTY and become a daemon\n",
-           DEFAULT_FTP_PORT, MAX_CLIENTS);
+    fprintf(stderr, "usage: %s [-N] [-p num] [-i addr] [-m num] [-l num] user path\n"
+                    "       %s [-h]\n", exe_name, exe_name);
 }
 
 static void daemonize()
