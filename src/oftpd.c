@@ -12,6 +12,7 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <getopt.h>
+#include <err.h>
 
 #include "oftpd.h"
 #include "ftp_listener.h"
@@ -51,11 +52,8 @@ int main(int argc, char *argv[])
         exe_name = argv[0];
     }
 
-    /* verify we're running as root */
-    if (geteuid() != 0) {
-        fprintf(stderr, "%s: program needs root permission to run\n", exe_name);
-        exit(1);
-    }
+    if (geteuid() != 0)
+        errx(EXIT_FAILURE, "program needs root permission to run");
 
     /* default command-line arguments */
     port = FTP_PORT;
@@ -84,12 +82,8 @@ int main(int argc, char *argv[])
         switch (ch) {
         case 'p': {
             long num = strtol(optarg, &endptr, 0);
-            if (num < MIN_PORT || num > MAX_PORT || *endptr != '\0') {
-                snprintf(temp_buf, sizeof(temp_buf), "port must be a number between "
-                    "%d and %d", MIN_PORT, MAX_PORT);
-                print_usage(temp_buf);
-                exit(1);
-            }
+            if (num < MIN_PORT || num > MAX_PORT || *endptr != '\0')
+                errx(EXIT_FAILURE, "port must be between %d and %d", MIN_PORT, MAX_PORT);
             port = num;
             break;
         }
@@ -98,12 +92,9 @@ int main(int argc, char *argv[])
             break;
         case 'm': {
             long num = strtol(optarg, &endptr, 0);
-            if (num < MIN_NUM_CLIENTS || num > MAX_NUM_CLIENTS || *endptr != '\0') {
-                snprintf(temp_buf, sizeof(temp_buf), "max clients must be a number "
-                    "between %d and %d", MIN_NUM_CLIENTS, MAX_NUM_CLIENTS);
-                print_usage(temp_buf);
-                exit(1);
-            }
+            if (num < MIN_NUM_CLIENTS || num > MAX_NUM_CLIENTS || *endptr != '\0')
+                errx(EXIT_FAILURE, "max clients must be between %d and %d", 
+                     MIN_NUM_CLIENTS, MAX_NUM_CLIENTS);
             max_clients = num;
             break;
         }
@@ -134,8 +125,7 @@ int main(int argc, char *argv[])
 		log_facility = LOG_LOCAL7;
 		break;
             default:
-                print_usage("unknown option");
-                exit(1);
+                errx(EXIT_FAILURE, "local facility must be from 0-7");
 	    }
         case 'N':
             detach = 0;
@@ -153,20 +143,16 @@ int main(int argc, char *argv[])
         } else if (dir_ptr == NULL) {
             dir_ptr = argv[i];
         } else {
-            print_usage("too many arguments on the command line");
-            exit(1);
+            errx(EXIT_FAILURE, "too many arguments");
         }
     }
-    if ((user_ptr == NULL) || (dir_ptr == NULL)) {
-        print_usage("missing user and/or directory name");
-        exit(1);
-    }
+
+    if ((user_ptr == NULL) || (dir_ptr == NULL))
+        errx(EXIT_FAILURE, "missing user and/or directory name");
 
     user_info = getpwnam(user_ptr);
-    if (user_info == NULL) {
-        fprintf(stderr, "%s: invalid user name\n", exe_name);
-        exit(1);
-    }
+    if (user_info == NULL)
+        errx(EXIT_FAILURE, "invalid username");
 
     /* become a daemon */
     if (detach) {
@@ -266,38 +252,28 @@ static void daemonize()
     int fd;
 
     null_fd = open("/dev/null", O_RDWR);
-    if (null_fd == -1) {
-        fprintf(stderr, "%s: error opening null output device; %s\n", exe_name, 
-          strerror(errno));
-        exit(1);
-    }
+    if (null_fd == -1)
+        err(EXIT_FAILURE, "error opening /dev/null");
 
     max_fd = sysconf(_SC_OPEN_MAX);
-    if (max_fd == -1) {
-        fprintf(stderr, "%s: error getting maximum open file; %s\n", exe_name, 
-          strerror(errno));
-        exit(1);
-    }
+    if (max_fd == -1)
+        err(EXIT_FAILURE, "error getting maximum open file");
 
 
     fork_ret = fork();
-    if (fork_ret == -1) {
-        fprintf(stderr, "%s: error forking; %s\n", exe_name, strerror(errno));
-        exit(1);
-    }
+    if (fork_ret == -1)
+        err(EXIT_FAILURE, "fork");
+
     if (fork_ret != 0) {
         exit(0);
     }
-    if (setsid() == -1) {
-        fprintf(stderr, "%s: error creating process group; %s\n", exe_name, 
-          strerror(errno));
-        exit(1);
-    }
+    if (setsid() == -1)
+        err(EXIT_FAILURE, "setsid");
+
     fork_ret = fork();
-    if (fork_ret == -1) {
-        fprintf(stderr, "%s: error forking; %s\n", exe_name, strerror(errno));
-        exit(1);
-    }
+    if (fork_ret == -1)
+        err(EXIT_FAILURE, "fork");
+
     if (fork_ret != 0) {
         exit(0);
     }
