@@ -159,7 +159,10 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    if (detach) daemon(false, false);
+    if (detach && daemon(false, false) == -1) {
+        fprintf(stderr, "cannot become daemon: %s\n", strerror(errno));
+        exit(1);
+    }
 
     /* avoid SIGPIPE on socket activity */
     signal(SIGPIPE, SIG_IGN);         
@@ -192,10 +195,7 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    if (setgroups(0, NULL) == -1) {
-        syslog(LOG_ERR, "error removing supplementary groups: %s", strerror(errno));
-        exit(1);
-    }
+    setgroups(0, NULL);
 
     /* set user to be as inoffensive as possible */
     if (setgid(user_info->pw_gid) != 0) {
