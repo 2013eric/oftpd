@@ -12,6 +12,8 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <getopt.h>
+#include <stdbool.h>
+#include <err.h>
 
 #include "oftpd.h"
 #include "ftp_listener.h"
@@ -20,7 +22,6 @@
 /* put our executable name here where everybody can see it */
 static const char *exe_name = "oftpd";
 
-static void daemonize();
 static void print_usage(const char *error);
 
 int main(int argc, char *argv[])
@@ -159,8 +160,10 @@ int main(int argc, char *argv[])
     }
 
     /* become a daemon */
-    if (detach) {
-        daemonize();
+    if (detach)
+    if (daemon(false, false) == -1) {
+        fprintf(stderr, "error becoming daemon: %s\n", strerror(errno));
+        exit(1);
     }
 
     /* avoid SIGPIPE on socket activity */
@@ -234,67 +237,3 @@ static void print_usage(const char *error)
     fprintf(stderr, "usage: %s [-N] [-p num] [-i addr] [-m num] [-l num] user path\n"
                     "       %s -h\n", exe_name, exe_name);
 }
-
-static void daemonize()
-{
-    int fork_ret;
-    int max_fd;
-    int null_fd;
-    int fd;
-
-    null_fd = open("/dev/null", O_RDWR);
-    if (null_fd == -1) {
-        fprintf(stderr, "%s: error opening null output device; %s\n", exe_name, 
-          strerror(errno));
-        exit(1);
-    }
-
-    max_fd = sysconf(_SC_OPEN_MAX);
-    if (max_fd == -1) {
-        fprintf(stderr, "%s: error getting maximum open file; %s\n", exe_name, 
-          strerror(errno));
-        exit(1);
-    }
-
-
-    fork_ret = fork();
-    if (fork_ret == -1) {
-        fprintf(stderr, "%s: error forking; %s\n", exe_name, strerror(errno));
-        exit(1);
-    }
-    if (fork_ret != 0) {
-        exit(0);
-    }
-    if (setsid() == -1) {
-        fprintf(stderr, "%s: error creating process group; %s\n", exe_name, 
-          strerror(errno));
-        exit(1);
-    }
-    fork_ret = fork();
-    if (fork_ret == -1) {
-        fprintf(stderr, "%s: error forking; %s\n", exe_name, strerror(errno));
-        exit(1);
-    }
-    if (fork_ret != 0) {
-        exit(0);
-    }
-    if (dup2(null_fd, 0) == -1) {
-        syslog(LOG_ERR, "error setting input to null; %s", 
-          strerror(errno));
-        exit(1);
-    }
-    if (dup2(null_fd, 1) == -1) {
-        syslog(LOG_ERR, "error setting output to null; %s", 
-          strerror(errno));
-        exit(1);
-    }
-    if (dup2(null_fd, 2) == -1) {
-        syslog(LOG_ERR, "error setting error output to null; %s", 
-          strerror(errno));
-        exit(1);
-    }
-    for (fd=3; fd<max_fd; fd++) {
-        close(fd);
-    }
-}
-
