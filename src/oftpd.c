@@ -69,18 +69,8 @@ int main(int argc, char *argv[])
     extern char *optarg;
     extern int optind, optopt, opterr, optreset;
 
-    static struct option longopts[] = {
-        {"port",        required_argument, NULL, 'p'},
-        {"interface",   required_argument, NULL, 'i'},
-        {"max-clients", required_argument, NULL, 'm'},
-        {"local",       required_argument, NULL, 'l'},
-        {"nodetach",    no_argument,       NULL, 'N'},
-        {"help",        no_argument,       NULL, 'h'},
-        { 0 }
-    };
-
     int ch;
-    while ((ch = getopt_long(argc, argv, "p:i:m:l:Nh", longopts, NULL)) != -1)
+    while ((ch = getopt(argc, argv, "p:i:m:l:Nh")) != -1)
         switch (ch) {
         case 'p': {
             long num = strtol(optarg, &endptr, 0);
@@ -242,7 +232,7 @@ static void print_usage(const char *error)
         fprintf(stderr, "%s: %s\n", exe_name, error);
     }
     fprintf(stderr, "usage: %s [-N] [-p num] [-i addr] [-m num] [-l num] user path\n"
-                    "       %s [-h]\n", exe_name, exe_name);
+                    "       %s -h\n", exe_name, exe_name);
 }
 
 static void daemonize()

@@ -1,102 +1,93 @@
-.TH OFTPD 8 "2001-04-03" Linux "Linux System Administration"
+.TH OFTPD 1
 .SH NAME 
-oftpd \- anonymous, read-only FTP server
+.B oftpd
+\- anonymous, read-only FTP server
 .SH SYNOPSIS
-.B oftpd [-p|--port
-.I port
-.B ] [-i|--interface
-.I ip-address
-.B ] [-m|--max-clients
-.I num
-.B ] [-l|--local
-.I local-logging
-.B ] [-N|--nodetach]
-.I user-name root-directory
+.B oftpd
+[\fB\-N\fR]
+[\fB\-p\fR \fInum\fR]
+[\fB\-i\fR \fIaddr\fR]
+[\fB\-m\fR \fInum\fR]
+[\fB\-l\fR \fInum\fR]
+.I user path
+.LP
+.B oftpd -h
 .SH DESCRIPTION
 .B oftpd
 is an anonymous-only FTP server.  
-
-Although it must be started by the root user, after initialization it
-runs as the user specified by 
-.I user-name
-parameter.  This should be a user with minimal permissions, preferably
-from an account set up for this purpose only.
-
+.PP
+Although it must be started by \fIroot\fR, after initialization, it
+runs as the user specified by \fIuser\fR parameter.  This should be a
+user with minimal permissions, such as \fI_ftp\fR.
+.PP
 The server uses
 .BR chroot (2)
-to change the root directory of the server to the 
-.I root-directory
-directory.  When a user connects, this is the directory that they will
-start in, and is the top of their directory tree.
-
+to change the root directory of the server to the \fIpath\fR directory.
+When a user connects, this is the directory that they will start in,
+and is the top of their directory tree.
+.PP
 When FTP clients connect, they may log in as "ftp" or "anonymous".
 Typically they will then send their e-mail address as password (most web
 browsers send a browser identifier rather than the user's e-mail
-address).  Standard Unix file permissions are enforced for downloading,
-meaning clients may download any file 
-.I user-name
-has permission to read.  No uploads are permitted.  All client activity
-is logged (see 
-.B DIAGNOSTICS
-below).
+address).  Standard UNIX file permissions are enforced for downloading,
+meaning clients may download any file \fIuser\fR has permission to read.
+No uploads are permitted.  All client activity is logged (see
+\fBDIAGNOSTICS\fR below).
 .SH OPTIONS
-.IP "-p|--port port"
-Use the specified
-.I port 
-to listen for client connections.  If not specified, the default FTP
-port (number 21) is used.
-.IP "-i|--interface ip-address"
-Use the interface connected to the IP address
-.I ip-address
-to accept connections.  If not specified, the server listens on all
-interfaces.
-.IP "-m|--max-clients num"
-Accept at most 
-.I num
-simultaneous clients.  If not specified, 250 will be the limit.
-.IP "-l|--local local-logging"
-Normally oftpd logs messages to syslog as the FTP daemon.  With this
-option, the specified 
-.I local-logging
-level will be used instead.  Valid numbers are 0-8.
-.IP "-N|--nodetach"
+.TP
+.B -N
 Do not run in the background; for running from
 .BR init (8)
 or for testing.
+.TP
+.BI -p " num"
+Use the specified port number to listen for connections. 
+If not specified, the default FTP port number (21) is used.
+.TP
+.BI -i " addr"
+Use the interface connected to the IP address \fIaddr\fR to accept
+connections.  If not specified, the server listens on all interfaces.
+.TP
+.BI -m " num"
+Accept at most \fInum\fR simultaneous clients. If not specified, 250 will
+be the limit.
+.TP
+.BI -l " num"
+\fBoftpd\fR logs messages to syslog as the FTP daemon.  With this option,
+the specified local-logging level \fInum\fR will be used. Valid numbers
+range from \fI0\fR-\fI8\fR.
 .SH DIAGNOSTICS
-Syntax errors will result in a help message being displayed, and a
+Syntax errors will result in an error message being displayed, and a
 non-zero exit code returned.  Otherwise the server will exit without
 output, and return zero.
-
+.PP
 After the server has started, you should check the appropriate log
 produced by 
 .BR sysklogd (8)
-for the FTP daemon to insure that startup completed correctly.  Certain
+for the FTP daemon to ensure that startup completed correctly.  Certain
 errors occur only after the server has disconnected from the TTY, so
 can only be recorded via the log mechanism.
-
+.PP
 If the server must terminate for any reason, it will also be logged, as
 will other non-fatal internal errors.  They are logged with attention to
 how serious the condition is believed to be, as documented in the
 .BR syslog (3)
 library call.
-
+.PP
 Client activity will also be logged through this mechanism.  This
 includes connect and disconnect (or rejection due to too many
 simultaneous users), the e-mail address reported as password, and file
-transfers.  All client commands are logged as sent at the 
-.B DEBUG 
+transfers.  All client commands are logged as sent at the \fBDEBUG\fR
 level.  To fully monitor client activity you may configure
 .BR sysklogd (8)
 to record these.
 .SH NOTES
-.B oftpd
-does not use 
+\fBoftpd\fR does not use
 .BR inetd (8)
 to run.  It is a stand-alone server.  There is no need to configure the 
 .I /etc/inetd.conf
 file to run it.  In fact, there should be no entry for FTP there at all.
-
+.PP
 You can use the
 .BR kill (1)
 command to stop
@@ -106,7 +97,7 @@ new FTP connections, and a new FTP server may be started.  Any existing
 connections to the old server will continue to function normally until
 the client disconnects or times out.  After all clients connections have
 closed, the server will exit.  
-
+.PP
 To shutdown the server and close all client connections immediately, use
 SIGKILL.
 .SH AUTHOR
