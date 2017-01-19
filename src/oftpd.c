@@ -197,6 +197,11 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
+    if (setgroups(0, NULL) == -1) {
+        syslog(LOG_ERR, "error removing supplementary groups: %s", strerror(errno));
+        exit(1);
+    }
+
     /* set user to be as inoffensive as possible */
     if (setgid(user_info->pw_gid) != 0) {
         syslog(LOG_ERR, "error changing group; %s", strerror(errno));
