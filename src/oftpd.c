@@ -159,12 +159,7 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    /* become a daemon */
-    if (detach)
-    if (daemon(false, false) == -1) {
-        fprintf(stderr, "error becoming daemon: %s\n", strerror(errno));
-        exit(1);
-    }
+    if (detach) daemon(false, false);
 
     /* avoid SIGPIPE on socket activity */
     signal(SIGPIPE, SIG_IGN);         
