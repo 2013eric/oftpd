@@ -191,16 +191,8 @@ int main(int argc, char *argv[])
     }
 
     setgroups(0, NULL);
-
-    /* set user to be as inoffensive as possible */
-    if (setgid(user_info->pw_gid) != 0) {
-        syslog(LOG_ERR, "error changing group; %s", strerror(errno));
-        exit(1);
-    }
-    if (setuid(user_info->pw_uid) != 0) {
-        syslog(LOG_ERR, "error changing group; %s", strerror(errno));
-        exit(1);
-    }
+    setgid(user_info->pw_gid);
+    setuid(user_info->pw_uid);
 
     /* start our listener */
     if (ftp_listener_start(&ftp_listener, &err) == 0) {
