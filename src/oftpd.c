@@ -159,11 +159,6 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    if (detach && daemon(false, false) == -1) {
-        fprintf(stderr, "cannot become daemon: %s\n", strerror(errno));
-        exit(1);
-    }
-
     /* avoid SIGPIPE on socket activity */
     signal(SIGPIPE, SIG_IGN);         
 
@@ -173,12 +168,12 @@ int main(int argc, char *argv[])
 
     /* change to root directory */
     if (chroot(dir_ptr) != 0) {
-        syslog(LOG_ERR, "error with root directory; %s\n", exe_name, 
-          strerror(errno));
+        fprintf(stderr, "cannot chroot: %s\n", strerror(errno));
         exit(1);
     }
-    if (chdir("/") != 0) {
-        syslog(LOG_ERR, "error changing directory; %s\n", strerror(errno));
+
+    if (detach && daemon(false, false) == -1) {
+        fprintf(stderr, "cannot become daemon: %s\n", strerror(errno));
         exit(1);
     }
 
