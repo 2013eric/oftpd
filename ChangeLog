@@ -1,3 +1,9 @@
+2017-01-24, Mario Campos <mario@mariocampos.io>
+- Removed the PORT command, to prevent the potential of a 'bounce'
+  attack. Unfortunately, this removal also limits oftpd from
+  running as a FTP proxy server to other FTP servers. For more
+  information on the FTP 'bounce' attack, see RFC 2577.
+
 2004-03-25, Shane Kerr <shane@time-travellers.org>
 - Philippe Oechslin <philippe.oechslin@epfl.ch> discovered a DoS
   vulnerability.  As reported:
