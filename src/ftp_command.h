@@ -6,7 +6,6 @@
  * CWD  <SP> <pathname> 
  * CDUP
  * QUIT
- * PORT <SP> <host-port>
  * LPRT <SP> <host-port-long>
  * EPRT <SP> <host-port-ext>
  * PASV

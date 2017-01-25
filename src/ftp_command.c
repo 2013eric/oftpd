@@ -34,7 +34,6 @@ struct {
     { "CWD",  ARG_STRING          },
     { "CDUP", ARG_NONE            },
     { "QUIT", ARG_NONE            },
-    { "PORT", ARG_HOST_PORT       },
     { "LPRT", ARG_HOST_PORT_LONG  },
     { "EPRT", ARG_HOST_PORT_EXT   },
     { "PASV", ARG_NONE            },

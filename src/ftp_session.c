@@ -65,7 +65,6 @@ static void do_pass(ftp_session_t *f, const ftp_command_t *cmd);
 static void do_cwd(ftp_session_t *f, const ftp_command_t *cmd);
 static void do_cdup(ftp_session_t *f, const ftp_command_t *cmd);
 static void do_quit(ftp_session_t *f, const ftp_command_t *cmd);
-static void do_port(ftp_session_t *f, const ftp_command_t *cmd);
 static void do_pasv(ftp_session_t *f, const ftp_command_t *cmd);
 static void do_type(ftp_session_t *f, const ftp_command_t *cmd);
 static void do_stru(ftp_session_t *f, const ftp_command_t *cmd);
@@ -94,7 +93,6 @@ static struct {
     { "CWD",  do_cwd },
     { "CDUP", do_cdup },
     { "QUIT", do_quit },
-    { "PORT", do_port },
     { "PASV", do_pasv },
     { "LPRT", do_lprt },
     { "LPSV", do_lpsv },
@@ -644,23 +642,6 @@ static void set_port(ftp_session_t *f, const sockaddr_storage_t *host_port)
 	f->data_port = *host_port;
 	reply(f, 200, "Command okay.");
     }
-
-    assert(invariant(f));
-}
-
-/* set IP and port for client to receive data on */
-static void do_port(ftp_session_t *f, const ftp_command_t *cmd) 
-{
-    const sockaddr_storage_t *host_port;
-
-    assert(invariant(f));
-    assert(cmd != NULL);
-    assert(cmd->num_arg == 1);
-
-    host_port = &cmd->arg[0].host_port;
-    assert(SSFAM(host_port) == AF_INET);
-
-    set_port(f, host_port);
 
     assert(invariant(f));
 }
