@@ -19,21 +19,18 @@
 #include "ftp_listener.h"
 #include "error.h"
 
-/* put our executable name here where everybody can see it */
-static const char *exe_name = "oftpd";
-
 static void print_usage(const char *error);
 
 int main(int argc, char *argv[])
 {
     char *endptr;
-    int port;
-    int max_clients;
-    int log_facility;
+    int port = FTP_PORT;
+    int max_clients = MAX_CLIENTS;
+    int log_facility = LOG_FTP;
 
-    char *user_ptr;
-    char *dir_ptr;
-    char *address;
+    char *user_ptr = NULL;
+    char *dir_ptr = NULL;
+    char *address = FTP_ADDRESS;
     
     char temp_buf[256];
 
@@ -42,33 +39,19 @@ int main(int argc, char *argv[])
 
     ftp_listener_t ftp_listener;
 
-    int detach;
+    bool detach = true;
 
     sigset_t term_signal;
     int sig;
 
-    /* grab our executable name */
-    if (argc > 0) {
-        exe_name = argv[0];
-    }
-
     /* verify we're running as root */
     if (geteuid() != 0) {
-        fprintf(stderr, "%s: program needs root permission to run\n", exe_name);
+        fprintf(stderr, "oftpd: program needs root permission to run\n");
         exit(1);
     }
 
-    /* default command-line arguments */
-    port = FTP_PORT;
-    user_ptr = NULL;
-    dir_ptr = NULL;
-    address = FTP_ADDRESS;
-    max_clients = MAX_CLIENTS;
-    detach = 1;
-    log_facility = LOG_FTP;
-
     extern char *optarg;
-    extern int optind, optopt, opterr, optreset;
+    extern int optind;
 
     int ch;
     while ((ch = getopt(argc, argv, "p:i:m:l:Nh")) != -1)
@@ -98,36 +81,17 @@ int main(int argc, char *argv[])
             max_clients = num;
             break;
         }
-        case 'l':
-            switch (optarg[0]) {
-	    case '0':
-		log_facility = LOG_LOCAL0;
-		break;
-	    case '1':
-		log_facility = LOG_LOCAL1;
-		break;
-	    case '2':
-		log_facility = LOG_LOCAL2;
-		break;
-	    case '3':
-		log_facility = LOG_LOCAL3;
-		break;
-	    case '4':
-		log_facility = LOG_LOCAL4;
-		break;
-	    case '5':
-		log_facility = LOG_LOCAL5;
-		break;
-	    case '6':
-		log_facility = LOG_LOCAL6;
-		break;
-	    case '7':
-		log_facility = LOG_LOCAL7;
-		break;
-            default:
+        case 'l': {
+            int locals[] = {LOG_LOCAL0, LOG_LOCAL1, LOG_LOCAL2, LOG_LOCAL3,
+                            LOG_LOCAL4, LOG_LOCAL5, LOG_LOCAL6, LOG_LOCAL7};
+            if ('0' <= optarg[0] && optarg[0] <= '7') {
+                log_facility = locals[optarg[0] - '0'];
+                break;
+            } else {
                 print_usage("unknown option");
                 exit(1);
-	    }
+            }
+        }
         case 'N':
             detach = 0;
             break;
@@ -155,7 +119,7 @@ int main(int argc, char *argv[])
 
     user_info = getpwnam(user_ptr);
     if (user_info == NULL) {
-        fprintf(stderr, "%s: invalid user name\n", exe_name);
+        fprintf(stderr, "oftpd: invalid user name\n");
         exit(1);
     }
 
@@ -163,17 +127,17 @@ int main(int argc, char *argv[])
     signal(SIGPIPE, SIG_IGN);         
 
     /* log the start time */
-    openlog(NULL, LOG_NDELAY, log_facility);
+    openlog(NULL, LOG_NDELAY|LOG_PID, log_facility);
     syslog(LOG_INFO,"Starting, version %s, as PID %d", VERSION, getpid());
 
     /* change to root directory */
     if (chroot(dir_ptr) != 0) {
-        fprintf(stderr, "cannot chroot: %s\n", strerror(errno));
+        fprintf(stderr, "oftpd: cannot chroot: %s\n", strerror(errno));
         exit(1);
     }
 
     if (detach && daemon(false, false) == -1) {
-        fprintf(stderr, "cannot become daemon: %s\n", strerror(errno));
+        fprintf(stderr, "oftpd: cannot become daemon: %s\n", strerror(errno));
         exit(1);
     }
 
@@ -190,11 +154,11 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
+    /* drop privilege */
     setgroups(0, NULL);
     setgid(user_info->pw_gid);
     setuid(user_info->pw_uid);
 
-    /* start our listener */
     if (ftp_listener_start(&ftp_listener, &err) == 0) {
         syslog(LOG_ERR, "error starting FTP service; %s", error_get_desc(&err));
         exit(1);
@@ -219,8 +183,8 @@ int main(int argc, char *argv[])
 static void print_usage(const char *error)
 {
     if (error != NULL) {
-        fprintf(stderr, "%s: %s\n", exe_name, error);
+        fprintf(stderr, "oftpd: %s\n", error);
     }
-    fprintf(stderr, "usage: %s [-N] [-p num] [-i addr] [-m num] [-l num] user path\n"
-                    "       %s -h\n", exe_name, exe_name);
+    fprintf(stderr, "usage: oftpd [-N] [-p num] [-i addr] [-m num] [-l num] user path\n"
+                    "       oftpd -h\n");
 }
