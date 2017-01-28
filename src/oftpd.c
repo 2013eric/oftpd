@@ -192,6 +192,7 @@ int main(int argc, char *argv[])
     setgroups(0, NULL);
     setgid(user_info->pw_gid);
     setuid(user_info->pw_uid);
+    pledge("stdio inet rpath", NULL);
 
     if (ftp_listener_start(&ftp_listener, &err) == 0) {
         syslog(LOG_ERR, "error starting FTP service; %s", error_get_desc(&err));
