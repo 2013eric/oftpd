@@ -14,6 +14,10 @@
 #include <getopt.h>
 #include <stdbool.h>
 #include <err.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <ifaddrs.h>
+#include <sys/socket.h>
 
 #include "oftpd.h"
 #include "ftp_listener.h"
@@ -67,9 +71,36 @@ int main(int argc, char *argv[])
             port = num;
             break;
         }
-        case 'i':
-            address = optarg;
+        case 'i': {
+            char *if_name, *if_addr;
+            struct ifaddrs *ifap, *ifa;
+            struct sockaddr_in *sa;
+
+            getifaddrs(&ifap);
+
+            for (ifa = ifap; ifa; ifa = ifa->ifa_next) {
+                if (ifa->ifa_addr->sa_family == AF_INET) {
+                    sa = (struct sockaddr_in *)ifa->ifa_addr;
+                    if_name = ifa->ifa_name;
+                    if_addr = inet_ntoa(sa->sin_addr);
+
+                    if (strncmp(optarg, if_name, strlen(if_name)) == 0
+                    ||  strncmp(optarg, if_addr, strlen(if_addr)) == 0) {
+                        address = if_addr;
+                        break;
+                    }
+                }
+            }
+
+            freeifaddrs(ifap);
+
+            if (!address) {
+                fprintf(stderr, "oftpd: cannot find specified interface\n");
+                exit(1);
+            }
+
             break;
+        }
         case 'm': {
             long num = strtol(optarg, &endptr, 0);
             if (num < MIN_NUM_CLIENTS || num > MAX_NUM_CLIENTS || *endptr != '\0') {
