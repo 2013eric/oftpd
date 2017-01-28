@@ -1,3 +1,8 @@
+2017-01-28, Mario Campos <mario@mariocampos.io>
+- Extended the semantics of the -i command-line option to include
+  AF_INET interface names. So, instead of passing an IP address
+  of the local host, one may pass an interface name, such as 'em0'.
+
 2017-01-24, Mario Campos <mario@mariocampos.io>
 - Removed the PORT command, to prevent the potential of a 'bounce'
   attack. Unfortunately, this removal also limits oftpd from

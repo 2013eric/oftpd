@@ -6,7 +6,7 @@
 .B oftpd
 [\fB\-N\fR]
 [\fB\-p\fR \fInum\fR]
-[\fB\-i\fR \fIaddr\fR]
+[\fB\-i\fR \fIarg\fR]
 [\fB\-m\fR \fInum\fR]
 [\fB\-l\fR \fInum\fR]
 .I user path
@@ -44,9 +44,8 @@ or for testing.
 Use the specified port number to listen for connections. 
 If not specified, the default FTP port number (21) is used.
 .TP
-.BI -i " addr"
-Use the interface connected to the IP address \fIaddr\fR to accept
-connections.  If not specified, the server listens on all interfaces.
+.BI -i " arg"
+Use the interface named \fIarg\fR or the interface which is connected to the IP address \fIarg\fR to accept connections. If not specified, the server listens on all interfaces.
 .TP
 .BI -m " num"
 Accept at most \fInum\fR simultaneous clients. If not specified, 250 will

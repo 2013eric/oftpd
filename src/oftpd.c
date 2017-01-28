@@ -216,6 +216,6 @@ static void print_usage(const char *error)
     if (error != NULL) {
         fprintf(stderr, "oftpd: %s\n", error);
     }
-    fprintf(stderr, "usage: oftpd [-N] [-p num] [-i addr] [-m num] [-l num] user path\n"
+    fprintf(stderr, "usage: oftpd [-N] [-p num] [-i arg] [-m num] [-l num] user path\n"
                     "       oftpd -h\n");
 }
