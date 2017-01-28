@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
             }
         }
         case 'N':
-            detach = 0;
+            detach = false;
             break;
         case 'h':
             print_usage(NULL);
