@@ -13,8 +13,8 @@ Short version (as root):
 ```
 
 ## Introduction
-oftpd is designed to be as secure as an anonymous FTP server can possible be. 
-It runs as non-root for most of the time, as uses the Unix `chroot(2)` command
+oftpd is designed to be as secure as an anonymous FTP server can possibly be. 
+It runs as non-root for most of the time, and uses the Unix `chroot(2)` command
 to hide most of the systems directories from external users--they cannot change
 into them even if the server is totally compromised! It contains its own
 directory-change code, so that it can run efficiently as a threaded server, and its
@@ -32,7 +32,7 @@ Shane Kerr, the original author, has this to say about the history of oftpd:
 
 Unfortunately, oftpd has been abandoned since 2004. Like Shane, I have a need
 for a secure, anonymous-only FTP server. So, without many options, I decided to
-maintain it.
+maintain it. :)
 
 ## Portability
 This fork of oftpd is designed only for OpenBSD. Compatibility with Linux is not
