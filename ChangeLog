@@ -3,6 +3,9 @@
   AF_INET interface names. So, instead of passing an IP address
   of the local host, one may pass an interface name, such as 'em0'.
 - Add the -v option, which prints the version number to stdout.
+- Use OpenBSD's pledge(2) to further restrict the system calls
+  that oftpd can make. It's like running chroot(2) on the
+  system-call space.
 
 2017-01-24, Mario Campos <mario@mariocampos.io>
 - Removed the PORT command, to prevent the potential of a 'bounce'
