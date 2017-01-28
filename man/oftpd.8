@@ -12,6 +12,8 @@
 .I user path
 .LP
 .B oftpd -h
+.LP
+.B oftpd -v
 .SH DESCRIPTION
 .B oftpd
 is an anonymous-only FTP server.  
@@ -55,6 +57,12 @@ be the limit.
 \fBoftpd\fR logs messages to syslog as the FTP daemon.  With this option,
 the specified local-logging level \fInum\fR will be used. Valid numbers
 range from \fI0\fR-\fI8\fR.
+.TP
+.B -h
+Prints the usage to stderr.
+.TP
+.B -v
+Prints the version number to stdout.
 .SH DIAGNOSTICS
 Syntax errors will result in an error message being displayed, and a
 non-zero exit code returned.  Otherwise the server will exit without

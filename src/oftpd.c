@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
     extern int optind;
 
     int ch;
-    while ((ch = getopt(argc, argv, "p:i:m:l:Nh")) != -1)
+    while ((ch = getopt(argc, argv, "p:i:m:l:Nhv")) != -1)
         switch (ch) {
         case 'p': {
             long num = strtol(optarg, &endptr, 0);
@@ -128,6 +128,9 @@ int main(int argc, char *argv[])
             break;
         case 'h':
             print_usage(NULL);
+            exit(0);
+        case 'v':
+            puts(VERSION);
             exit(0);
         case '?':
             exit(1);
@@ -217,5 +220,6 @@ static void print_usage(const char *error)
         fprintf(stderr, "oftpd: %s\n", error);
     }
     fprintf(stderr, "usage: oftpd [-N] [-p num] [-i arg] [-m num] [-l num] user path\n"
-                    "       oftpd -h\n");
+                    "       oftpd -h\n"
+                    "       oftpd -v\n");
 }
