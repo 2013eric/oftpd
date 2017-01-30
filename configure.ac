@@ -39,7 +39,7 @@ AC_FUNC_ALLOCA
 AC_FUNC_MEMCMP
 AC_TYPE_SIGNAL
 AC_FUNC_STRFTIME
-AC_CHECK_FUNCS(getcwd gettimeofday select socket strerror localtime_r gmtime_r)
+AC_CHECK_FUNCS(pledge getcwd gettimeofday select socket strerror localtime_r gmtime_r)
 dnl AC_CHECK_LIB(pthread, pthread_create)
 dnl AC_SEARCH_LIBS(pthread_create, [ pthread pthreads thread threads ])
 AC_SEARCH_LIBS(socket, socket)
